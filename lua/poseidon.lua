@@ -21,13 +21,15 @@ local find_mapping = function (maps, lhs)
 end
 
 -- reset mapping to previous mapping when buffer is closed
-local reset_mapping =  function (prev_map)
+local reset_mapping =  function (prev_map, keym)
     if prev_map then
       if prev_map.rhs then
         vim.api.nvim_set_keymap('n', prev_map.lhs, prev_map.rhs,{})
       else
         vim.api.nvim_del_keymap('n', prev_map.lhs)
       end
+    else
+      vim.api.nvim_del_keymap('n', keym)
     end
 end
 
@@ -93,6 +95,7 @@ M.buffer_nav = function (full_set)
   win = vim.api.nvim_open_win(buf, true, opts)
   vim.api.nvim_win_set_option(win, "cursorline", true)
 
+  local keymaps = {"<CR>", "D<CR>", "<ESC>"}
   -- change the mapping only for the floating window buffer and reset it afterwards
   local change_mapping = function (lhs, rhs, com, prev_map)
     vim.keymap.set('n', lhs, function ()
@@ -112,18 +115,25 @@ M.buffer_nav = function (full_set)
         end
         win = nil
         buf = nil
-        -- change mapping back to what it was
-        reset_mapping(prev_map)
+        -- change mappings back to what they were
+        for _, value in pairs(keymaps) do
+          if value then
+            reset_mapping(prev_map[value], value)
+          end
+
+        end
     end)
   end
   -- change mappings in the buffer window
   local maps = vim.api.nvim_get_keymap("n")
-  local accept_map = find_mapping(maps, "<CR>")
-  local del_map = find_mapping(maps, "D<CR>")
-  local esc_map = find_mapping(maps, "<ESC>")
-  change_mapping('<CR>', ':b %d', 0, accept_map)
-  change_mapping('D<CR>', ':bw %d', 0, del_map)
-  change_mapping('<ESC>', nil, 1, esc_map)
+  -- store mappings before remap for Poseidon
+  local mappings = {}
+  for _, value in pairs(keymaps) do
+    mappings[value] = find_mapping(maps, value)
+  end
+  change_mapping('<CR>', ':b %d', 0, mappings)
+  change_mapping('D<CR>', ':bw %d', 0, mappings)
+  change_mapping('<ESC>', nil, 1, mappings)
 end
 
 return M
