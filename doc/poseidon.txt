@@ -1,0 +1,33 @@
+================================================================================
+                                                                     *poseidon*
+
+This Plugin helps you to change between open buffers that have a name.
+
+Example:
+
+                                                        *poseidon.buffer_nav()*
+poseidon.buffer_nav({full_set})
+    If {full_set} is nil:
+        Shows all buffers with the same file type as the current file >
+        poseidon.buffer_nav()
+<
+    If {full_set} is any
+        Shows all buffers that have name >
+        poseidon.buffer_nav(1)
+<
+    Shows a floating window with all possible options.
+    These can be navigated with vim modtions like any other file.
+
+    To select a buffer and go to it:
+        Navigate to the filepath in the floating window and press <CR>
+    To close a buffer that's in the floating window:
+        Navigate to the filepath in the floating window and press D<CR>
+    To close the floating window without any action:
+        Press <ESC>
+
+    This keymappings get assigned when |poseidon.buffer_nav()| is used and reset
+    afterwards to the keymappings that where there before. So it will change
+    these mappings only for the time when the floating window is open.
+
+
+vim:tw=78:ts=8:ft=help:norl:
