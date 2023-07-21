@@ -1,4 +1,4 @@
-# Poseidon 🧜
+# Poseidon 🔱
 
 *Let's you navigate the sea of open buffers in neovim*
 
