@@ -52,14 +52,22 @@ M.buffer_nav = function (full_set)
       local buffer_name = vim.fn.bufname(b)
       local split_bufname = split_string(buffer_name, ".")
       local file_ending = split_bufname[#split_bufname]
+      -- current buffer indicator
+      local prefix = " "
       if buffer_name:len() > 0 then
         if full_set then
+            if b == vim.api.nvim_get_current_buf() then
+              prefix = "*"
+            end
             table.insert(buf_nums, b)
-            table.insert(buf_names, string.format("%-3d %s", b, buffer_name))
+            table.insert(buf_names, string.format("%s %-3d %s", prefix, b, buffer_name))
         else
           if split_name == file_ending then
+            if b == vim.api.nvim_get_current_buf() then
+              prefix = "*"
+            end
             table.insert(buf_nums, b)
-            table.insert(buf_names, string.format("%-3d %s", b, buffer_name))
+            table.insert(buf_names, string.format("%s %-3d %s", prefix, b, buffer_name))
           end
         end
       end
@@ -135,6 +143,5 @@ M.buffer_nav = function (full_set)
   change_mapping('D<CR>', ':bw %d', 0, mappings)
   change_mapping('<ESC>', nil, 1, mappings)
 end
-
 return M
 
